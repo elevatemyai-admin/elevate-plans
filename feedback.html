@@ -20,13 +20,15 @@ button{margin-top:26px;background:var(--teal);color:#fff;border:0;border-radius:
 button:disabled{opacity:.6;cursor:default}
 .err{color:#b3261e;margin-top:14px;display:none}.hp{position:absolute;left:-9999px}
 .thanks{text-align:center;padding:30px 10px}.thanks h1{margin-bottom:10px}
+.hint{font-size:.85rem;color:#7a7268;margin:-2px 0 7px}.where{background:#e3f5f2;border:1px solid #bfe4dd;color:#14564d;border-radius:10px;padding:10px 14px;font-size:.9rem;margin-top:14px}
 </style></head><body><div class="wrap">
 <div class="brand">elevatemy<b>.ai</b></div><div class="sub">AI SOLUTIONS FOR GROWING BUSINESSES</div>
 <div class="card" id="card">
 <form id="f" novalidate>
 <h1>elevatemy.ai client feedback form</h1>
-<p class="lead">Short answers are great. Skip anything that doesn't fit. Fill in at least one.</p>
-<label for="name">Respondent name</label><input type="text" id="name" maxlength="120" autocomplete="name">
+<p class="lead">Short answers are great, and you can skip anything that doesn't fit. Please fill in at least one.</p>
+<div class="where">Where your answers go: straight to Tracy and Matt at elevatemy.ai, and no one else. We only quote you in our newsletter if you say yes at the bottom.</div>
+<label for="name">Your name</label><div class="hint">So we know who to thank. Leave it blank if you would rather stay anonymous.</div><input type="text" id="name" maxlength="120" autocomplete="name">
 <div id="qs"></div>
 <label>It's okay to quote me in Elevate: AI Made Simple if any of this is useful to share</label>
 <div class="opts">
@@ -49,8 +51,9 @@ const Q=["Walking back through the process so far, what's stood out to you, good
 "What's been confusing, slow, or missing that we should fix?",
 "Anything you expected from this process that hasn't happened yet?",
 "In your own words, how would you describe working with elevatemy.ai to someone considering it?"];
+const H=['Anything at all: a moment, a surprise, a frustration.','Too fast, too slow, too many calls? Tell us what you would change.','Pretend you are at a coffee shop. A sentence or two is perfect.','Tools, templates, or help you found out about along the way.','A page, tool, or checklist you actually opened more than once.','Even small things count, like one less thing to remember.','A number, a finished task, or a moment where something clicked.','Be blunt. This is the most useful answer we get.','Something you hoped for, or we said, that is still missing.','A line or two we could share with someone considering it. Only quoted if you say yes below.'];
 const qs=document.getElementById('qs');
-Q.forEach((q,i)=>{qs.insertAdjacentHTML('beforeend','<label for="q'+i+'">'+q+'</label><textarea id="q'+i+'" maxlength="4000"></textarea>')});
+Q.forEach((q,i)=>{qs.insertAdjacentHTML('beforeend','<label for="q'+i+'">'+q+'</label>'+(H[i]?'<div class="hint">'+H[i]+'</div>':'')+'<textarea id="q'+i+'" maxlength="4000"></textarea>')});
 document.getElementById('f').addEventListener('submit',async e=>{
   e.preventDefault();
   const err=document.getElementById('err'),go=document.getElementById('go');err.style.display='none';
