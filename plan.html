@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="color-scheme" content="light"/>
+<title>Your Plan | elevatemy.ai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B3A6B;--teal:#00A99D;--teal-dark:#0F6E56;--teal-pale:#E1F5F4;
+  --amber:#C4773B;--cream:#EDE7DC;--cream-dark:#E4DDCE;--sand:#8B7355;
+  --white:#fff;--ink:#1a1a1a;--muted:#5a5a5a;--line:#ddd9d0;
+  --d:'Bricolage Grotesque',Georgia,serif;--b:'Inter',Arial,sans-serif;
+}
+body{font-family:var(--b);background:var(--cream);color:var(--ink);line-height:1.5;font-size:16px;min-height:100vh}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+mark{background:#fff2a8;color:inherit;padding:0 3px;border-radius:3px}
+.sample{background:#fff2a8;color:#5c4a00;font-size:13px;text-align:center;padding:8px 16px}
+
+.top{max-width:760px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-i{width:30px;height:30px;background:var(--navy);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.logo-i span{display:block;height:3px;width:16px;border-radius:2px;background:var(--teal)}
+.logo-i span:nth-child(2){width:10px;background:#5BC8C0}
+.wm{font-family:var(--d);font-weight:700;font-size:18px;letter-spacing:-.03em;color:var(--navy)}
+.wm i{font-style:normal;color:var(--teal)}
+.askbtn{font-size:13.5px;font-weight:600;color:var(--navy);background:var(--white);border:1.5px solid var(--line);border-radius:999px;padding:6px 14px}
+.askbtn:hover{border-color:var(--teal)}
+
+.wrap{max-width:760px;margin:0 auto;padding:22px 20px 80px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--teal)}
+h1{font-family:var(--d);font-size:clamp(1.8rem,6vw,2.5rem);line-height:1.1;letter-spacing:-.02em;color:var(--navy);margin:4px 0 8px}
+.lede{font-size:16px;color:var(--muted);max-width:560px}
+h2{font-family:var(--d);font-size:1.35rem;color:var(--navy);letter-spacing:-.01em}
+.sec{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:30px 0 10px}
+.sub{font-size:14px;color:var(--muted)}
+
+.keydate{margin-top:16px;background:var(--navy);color:#fff;border-radius:12px;padding:11px 16px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px}
+.keydate b{font-family:var(--d);font-size:1rem}
+.keydate span{color:#cfe0f5}
+
+/* time filter */
+.filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.fl{font-size:13px;color:var(--muted);margin-right:2px}
+.f{font-size:13px;font-weight:600;border:1.5px solid var(--line);background:var(--white);color:var(--navy);border-radius:999px;padding:5px 12px}
+.f:hover{border-color:var(--teal)}
+.f[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
+
+/* compact list */
+.list{background:var(--white);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.r{border-bottom:1px solid var(--cream-dark)}
+.r:last-child{border-bottom:none}
+.rh{display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer;min-height:54px}
+.rh:hover{background:#faf8f3}
+.check{width:28px;height:28px;border-radius:50%;border:2.5px solid #b9b3a6;background:var(--white);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;transition:all .15s}
+.check:hover{border-color:var(--teal);background:var(--teal-pale)}
+.r.done .check{background:var(--teal);border-color:var(--teal)}
+.rm{flex:1;min-width:0}
+.rt{font-weight:600;font-size:15.5px;line-height:1.3;color:var(--navy)}
+.r.done .rt{color:var(--sand);text-decoration:line-through;text-decoration-thickness:1.5px;font-weight:500}
+.rs{font-size:12.5px;color:var(--muted);margin-top:1px}
+.rs b{color:var(--ink);font-weight:600}
+.m-ai{color:var(--teal-dark);font-weight:600}
+.m-free{color:#9a5a12;font-weight:600}
+.m-next{background:var(--teal);color:#fff;border-radius:6px;padding:0 6px;font-size:11px;font-weight:700;margin-right:6px;letter-spacing:.04em}
+.cv{color:var(--sand);transition:transform .2s;flex-shrink:0}
+.r.open .cv{transform:rotate(180deg)}
+.r.open{background:#fdfcf9}
+.rd{display:none;padding:2px 16px 18px 54px}
+.r.open .rd{display:block}
+.why{font-size:14.5px;color:var(--muted);margin-bottom:12px}
+.why.note{white-space:pre-wrap}
+ol.steps li{cursor:pointer}
+ol.steps li::before{content:'';border:2px solid #b9b3a6;background:var(--white);border-radius:6px;width:20px;height:20px;margin-top:1px}
+ol.steps li:hover::before{border-color:var(--teal)}
+ol.steps li.sdone span{color:var(--sand);text-decoration:line-through}
+ol.steps li.sdone::before{background:var(--teal);border-color:var(--teal);color:#fff;content:'\2713';font-size:13px}
+.lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sand);margin:0 0 8px}
+ol.steps{list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+ol.steps li{counter-increment:s;display:flex;gap:11px;font-size:14.5px;line-height:1.5}
+ol.steps li::before{content:counter(s);flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--cream);color:var(--navy);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.shortcut{background:var(--teal-pale);border:1px solid #bfe4dd;border-radius:12px;padding:13px 15px}
+.shortcut p{font-size:14px;color:var(--navy);margin-bottom:9px}
+.prompt{background:var(--white);border:1px dashed #8fcfc6;border-radius:8px;padding:11px 13px;font-size:13.5px;line-height:1.55;white-space:pre-wrap}
+.copy{margin-top:9px;background:var(--teal);color:#fff;border:none;border-radius:8px;padding:8px 15px;font-weight:600;font-size:13.5px}
+.copy.ok{background:var(--navy)}
+.helpme{margin-top:12px;background:none;border:none;color:var(--navy);font-weight:600;font-size:13.5px;text-decoration:underline;text-underline-offset:3px;padding:0}
+
+.more{display:block;width:100%;margin-top:10px;background:none;border:1.5px dashed var(--line);border-radius:12px;padding:10px;font-weight:600;font-size:14px;color:var(--teal-dark)}
+.more:hover{border-color:var(--teal)}
+.none{padding:20px;text-align:center;color:var(--muted);font-size:14.5px}
+
+/* whole picture */
+.fold{background:var(--white);border:1px solid var(--line);border-radius:14px;margin-bottom:12px}
+.fold-h{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;cursor:pointer;font-weight:600;font-size:14.5px;color:var(--navy)}
+.fold-h .cv{transition:transform .2s}
+.fold.shut .cv{transform:rotate(180deg)}
+.fold.shut .fold-b{display:none}
+.fold-b{padding:0 16px 16px;display:grid;grid-template-columns:1fr 1fr;gap:20px;border-top:1px solid var(--cream-dark);padding-top:14px}
+.fold-b h4{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sand);margin-bottom:7px}
+.fold-b ul{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:14.5px}
+.fold-b li{padding-left:15px;position:relative}
+.fold-b li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--teal)}
+
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.proj{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:14px 16px;text-align:left;display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,box-shadow .15s}
+.proj:hover{border-color:var(--teal);box-shadow:0 6px 18px rgba(27,58,107,.09)}
+.proj.focus{border:2px solid var(--teal);padding:13px 15px}
+.num{width:30px;height:30px;border-radius:50%;background:var(--cream);color:var(--navy);font-family:var(--d);font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+.proj.focus .num{background:var(--teal);color:#fff}
+.proj.fin .num{background:var(--teal);color:#fff}
+.pb{flex:1;min-width:0}
+.pn{font-family:var(--d);font-size:1.12rem;font-weight:700;color:var(--navy);line-height:1.2}
+.po{font-size:13.5px;color:var(--muted);margin-top:2px}
+.bar{height:6px;background:var(--cream-dark);border-radius:999px;overflow:hidden;margin-top:9px}
+.bar span{display:block;height:100%;background:var(--teal);border-radius:999px;transition:width .3s}
+.pf{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:5px}
+.pf b{color:var(--navy)}
+.starthere{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal-dark);margin-bottom:2px}
+
+/* project page */
+.back{background:none;border:none;color:var(--navy);font-weight:600;font-size:14px;padding:4px 0;margin-bottom:6px}
+.back:hover{text-decoration:underline}
+.donewhen{background:var(--teal-pale);border:1px solid #bfe4dd;border-radius:12px;padding:12px 16px;margin:14px 0 4px}
+.donewhen .lbl{color:var(--teal-dark);margin-bottom:3px}
+.donewhen p{font-size:15px;color:var(--navy);font-weight:500}
+.pbar{display:flex;align-items:center;gap:12px;margin:12px 0 0;font-size:13.5px;color:var(--muted)}
+.pbar .bar{flex:1;margin:0}
+.bar-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0 4px}
+.hide{font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.group{margin-top:20px}
+.group h3{font-family:var(--d);font-size:1.05rem;color:var(--navy)}
+.group .gs{font-size:13px;color:var(--muted);margin-bottom:8px}
+.keep{margin-top:26px;background:var(--white);border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+.keep ul{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:14.5px}
+.finish{margin-top:22px;background:linear-gradient(135deg,var(--teal-pale),var(--white));border:1px solid #bfe4dd;border-radius:14px;padding:20px;text-align:center}
+.finish h3{font-family:var(--d);font-size:1.2rem;color:var(--navy);margin-bottom:4px}
+.finish p{font-size:14.5px;color:var(--muted);margin-bottom:12px}
+.btn{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-weight:600;font-size:15px}
+.btn:hover{filter:brightness(1.07)}
+.foot{margin-top:34px;text-align:center;font-size:14px;color:var(--muted)}
+.foot button{margin-top:8px}
+.powered{text-align:center;margin-top:22px;font-size:11.5px;color:var(--sand)}
+
+/* ask modal */
+.ov{position:fixed;inset:0;background:rgba(20,30,50,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+.ov.show{display:flex}
+.modal{background:var(--white);border-radius:18px;max-width:420px;width:100%;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.modal h3{font-family:var(--d);font-size:1.3rem;color:var(--navy)}
+.modal .about{font-size:13.5px;color:var(--muted);margin:2px 0 14px}
+.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--cream);border:1.5px solid transparent;border-radius:12px;padding:12px 14px;margin-bottom:8px;text-decoration:none;color:inherit}
+.opt:hover{border-color:var(--teal)}
+.opt b{display:block;font-size:15px;color:var(--navy)}
+.opt span{font-size:13px;color:var(--muted)}
+.opt .ic{font-size:20px}
+.modal .reply{font-size:13px;color:var(--muted);margin-top:6px}
+.close{margin-top:10px;background:none;border:none;color:var(--muted);font-weight:600;font-size:14px;width:100%}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:all .25s;z-index:60}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.addbox{margin-top:14px;background:var(--white);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.addrow{display:flex;gap:8px;flex-wrap:wrap}
+.addrow input{flex:1;min-width:180px;font:inherit;font-size:15px;border:1.5px solid var(--line);border-radius:10px;padding:9px 12px}
+.addrow input:focus{outline:none;border-color:var(--teal)}
+.addrow select{font:inherit;font-size:14px;border:1.5px solid var(--line);border-radius:10px;padding:9px 8px;background:var(--white)}
+.keydate{display:block}
+.krow{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.kbar{height:8px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden;margin-top:10px}
+.kbar span{display:block;height:100%;background:#5BC8C0;border-radius:999px;transition:width .3s}
+.two{display:flex;gap:10px}
+.two .more{margin-top:10px}
+.navlink{font-size:13.5px;font-weight:600;color:var(--navy);text-decoration:underline;text-underline-offset:3px;margin-right:14px}
+.topr{display:flex;align-items:center}
+.olink{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;background:var(--white);border:1px solid var(--line);border-radius:14px;padding:14px 18px;text-align:left;width:100%}
+.olink:hover{border-color:var(--teal)}
+.olink b{display:block;font-family:var(--d);font-size:1.05rem;color:var(--navy)}
+.olink span{font-size:13.5px;color:var(--muted)}
+.olink i{font-style:normal;color:var(--teal-dark);font-weight:600;white-space:nowrap}
+.ovc{background:var(--white);border:1px solid var(--line);border-radius:14px;margin-top:14px}
+.ovc-h{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;cursor:pointer;font-family:var(--d);font-weight:700;font-size:1.05rem;color:var(--navy)}
+.ovc-h .cv{transition:transform .2s;color:var(--sand)}
+.ovc.shut .cv{transform:rotate(180deg)}
+.ovc.shut .ovc-b{display:none}
+.ovc-b{padding:2px 18px 18px}
+.big{font-family:var(--d);font-size:2.4rem;font-weight:700;color:var(--teal);line-height:1}
+.big small{font-size:14px;font-family:var(--b);color:var(--muted);font-weight:500;margin-left:8px}
+.bar.lg{height:12px;margin:10px 0 14px}
+.prow{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--cream-dark);text-decoration:none;color:inherit;width:100%;background:none;border-left:none;border-right:none;border-bottom:none;text-align:left}
+.prow .num{width:26px;height:26px;font-size:13px}
+.prow .pb{flex:1}
+.prow .pn{font-size:1rem}
+.prow .po{font-size:13px}
+.prow .cnt{font-size:12.5px;color:var(--muted);white-space:nowrap;text-align:right}
+.prow .cnt b{color:var(--navy);display:block}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sand);text-align:left;padding:6px 8px 6px 0}
+.tbl td{padding:9px 8px 9px 0;border-top:1px solid var(--cream-dark);vertical-align:top}
+.tbl td:first-child{font-weight:600;color:var(--navy)}
+.keydate mark{color:var(--ink)}
+.pn mark{color:var(--ink)}
+@media(max-width:620px){
+  .rs{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pgrid,.fold-b{grid-template-columns:1fr}
+  .rd{padding-left:16px}
+  .rh{padding:9px 12px;gap:10px}
+}
+</style>
+</head>
+<body>
+<div class="sample" id="sampleBar" style="display:none">Template for any client. <mark>Yellow</mark> is filled in from the discovery call. Projects and steps are samples. Delete this bar before sending.</div>
+
+<div class="top">
+  <a class="logo" href="#/"><div class="logo-i"><span></span><span></span><span></span></div><div class="wm">elevate<i>my</i>.ai</div></a>
+  <div class="topr"><a class="navlink" href="#/overview">Overview</a><button class="askbtn" onclick="askUs()">Ask us</button></div>
+</div>
+<div class="wrap" id="app"></div>
+
+<div class="ov" id="ov" onclick="if(event.target===this)closeAsk()">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
+    <h3 id="mt">How would you like to reach us?</h3>
+    <div class="about" id="about"></div>
+    <div id="opts"></div>
+    <div class="reply"></div>
+    <button class="close" onclick="closeAsk()">Close</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== the plan itself comes from /api/plan (one database, edited in the admin page) ===== */
+let CLIENT_NAME='',HELP={},SAVE=false,PROJECTS=[],TASKS=[],OV={},KEYDATE='',REPLY='';
+let PLAN_ID='',LOADED_REV=0;
+
+/* ===== state ===== */
+const done=new Set(),open=new Set(),justDone=new Set();
+let timeF='any',homeCount=5,whereShut=false,hideDone=false;
+const FILTERS=[['any','Any time'],['15','15 min or less'],['30','30 min or less'],['long','Over 30 min']];
+const $=id=>document.getElementById(id);
+const byId=id=>TASKS.find(t=>t.id===id);
+const proj=id=>PROJECTS.find(p=>p.id===id);
+const ordered=()=>PROJECTS.flatMap(p=>p.groups.flatMap(g=>g.ids));
+const counts=p=>{const ids=p.groups.flatMap(g=>g.ids);return{d:ids.filter(i=>done.has(i)).length,n:ids.length}};
+const focusProject=()=>PROJECTS.find(p=>{const c=counts(p);return c.d<c.n});
+const visibleProjects=()=>PROJECTS.filter(p=>p.id!=='mine'||counts(p).n>0);
+const pctOf=c=>c.n?Math.round(c.d/c.n*100):0;
+const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const plain=t=>t.mine?t.title:t.title.replace(/<[^>]+>/g,'');
+const timeOk=t=>timeF==='any'||(timeF==='15'&&t.mins<=15)||(timeF==='30'&&t.mins<=30)||(timeF==='long'&&t.mins>30);
+const chev='<svg class="cv" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5l4 4 4-4"/></svg>';
+const isPH=v=>/^\[.*\]$/.test(v||'');
+
+/* ===== saving and your own steps ===== */
+const STATE={added:[]};
+const sdone=new Set();
+const hsh=s=>{let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return (h>>>0).toString(36)};
+const stText=s=>typeof s==='string'?s:s.t;
+const stKey=(t,i)=>t.id+':'+hsh(String(stText(t.steps[i])).replace(/<[^>]+>/g,''));
+const stDone=(t,i)=>sdone.has(stKey(t,i));
+let saveT=null,lastPush=0;
+const snapshot=()=>({done:[...done],added:STATE.added,steps:[...sdone],t:Date.now()});
+function save(){
+  if(!SAVE)return;
+  clearTimeout(saveT);saveT=setTimeout(push,600);
+}
+async function push(){
+  saveT=null;
+  try{
+    const r=await fetch('/api/progress',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(snapshot())});
+    if(!r.ok)throw new Error('save failed');lastPush=Date.now();
+  }catch(e){toast('Could not save just now. Trying again.');clearTimeout(saveT);saveT=setTimeout(push,8000)}
+}
+function applyAdded(a){
+  const p=proj(a.p)||proj('mine');
+  let g=p.groups.find(x=>x.mine);
+  if(!g){g={name:'Added by you',sub:'Your own steps.',ids:[],mine:true};p.groups.push(g)}
+  g.ids.push(a.id);
+  TASKS.push({id:a.id,title:a.title,why:'',mins:a.mins,ai:false,steps:[],mine:true,p:p.id,g:g.name});
+}
+function applyState(s){
+  if(!s)return;
+  (s.added||[]).forEach(a=>{if(a&&a.id&&a.title&&!byId(a.id)){const x={id:String(a.id),title:String(a.title).slice(0,160),mins:+a.mins||20,p:a.p||'mine'};STATE.added.push(x);applyAdded(x)}});
+  (s.done||[]).forEach(i=>{if(byId(String(i)))done.add(String(i))});
+  (s.steps||[]).forEach(k=>sdone.add(String(k)));
+}
+function loadPlan(data){
+  const pl=data.plan;
+  CLIENT_NAME=pl.client||'';HELP=pl.help||{};KEYDATE=pl.keyDate||'';REPLY=(pl.help&&pl.help.reply)||'';OV=pl.overview||{};
+  SAVE=!pl.demo;
+  PROJECTS=JSON.parse(JSON.stringify(pl.projects||[]));
+  TASKS=JSON.parse(JSON.stringify(pl.tasks||[]));
+  PROJECTS.push({id:'mine',name:'Your own steps',outcome:'Anything extra you want to remember to do.',done:'You have done everything you added.',groups:[],keep:['Add a step any time from your plan page.']});
+  PROJECTS.forEach(p=>p.groups.forEach(g=>{g.ids=g.ids.map(String)}));
+  TASKS.forEach(t=>{t.id=String(t.id);for(const p of PROJECTS)for(const g of p.groups)if(g.ids.includes(t.id)){t.p=p.id;t.g=g.name}});
+  TASKS=TASKS.filter(t=>t.p);
+  done.clear();sdone.clear();STATE.added=[];
+  applyState(data.progress);
+  LOADED_REV=data.rev||0;PLAN_ID=data.id;
+  $('sampleBar').style.display=pl.demo?'block':'none';
+  const rp=document.querySelector('.modal .reply');
+  if(rp){rp.innerHTML=REPLY?'We reply within '+REPLY+' business days.':'';}
+  document.title=(CLIENT_NAME?CLIENT_NAME.replace(/<[^>]+>/g,'')+"'s plan":'Your plan')+' | elevatemy.ai';
+}
+function addStep(pid){
+  const inp=$('addT');const title=(inp&&inp.value||'').trim();
+  if(!title)return;
+  const x={id:'u'+Date.now().toString(36),title:title.slice(0,160),mins:+$('addM').value||20,p:pid};
+  STATE.added.push(x);applyAdded(x);save();toast('Added to your plan.');render();
+}
+function removeStep(id,e){
+  e&&e.stopPropagation();
+  STATE.added=STATE.added.filter(a=>a.id!==id);
+  const i=TASKS.findIndex(t=>t.id===id);if(i>-1)TASKS.splice(i,1);
+  PROJECTS.forEach(p=>p.groups.forEach(g=>{g.ids=g.ids.filter(x=>x!==id)}));
+  done.delete(id);open.delete(id);save();render();
+}
+function addBox(pid){
+  return `<div class="addbox"><div class="lbl">Add your own step</div><div class="addrow"><input id="addT" type="text" maxlength="160" placeholder="Something you want to remember to do" onkeydown="if(event.key==='Enter')addStep('${pid}')"/><select id="addM" aria-label="About how long"><option value="10">10 min</option><option value="20" selected>20 min</option><option value="30">30 min</option><option value="45">45 min</option></select><button class="btn" onclick="addStep('${pid}')">Add</button></div></div>`;
+}
+
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),1600)}
+function confetti(){
+  const c=document.createElement('canvas');
+  c.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:70';
+  c.width=innerWidth;c.height=innerHeight;document.body.appendChild(c);
+  const x=c.getContext('2d'),cols=['#1B3A6B','#00A99D','#C4773B','#5BC8C0','#fff2a8','#E1F5F4'];
+  const ps=Array.from({length:110},()=>({x:c.width/2+(Math.random()-.5)*120,y:c.height*.62,vx:(Math.random()-.5)*14,vy:-(Math.random()*13+6),
+    s:Math.random()*7+4,r:Math.random()*6.28,vr:(Math.random()-.5)*.4,col:cols[Math.random()*cols.length|0]}));
+  let f=0;
+  (function tick(){
+    x.clearRect(0,0,c.width,c.height);
+    ps.forEach(p=>{p.vy+=.38;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
+      x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.col;x.globalAlpha=Math.max(0,1-f/110);x.fillRect(-p.s/2,-p.s/3,p.s,p.s*.6);x.restore()});
+    if(++f<110)requestAnimationFrame(tick);else c.remove();
+  })();
+}
+function toggleDone(id,e){
+  e&&e.stopPropagation();
+  const p=proj(byId(id).p),before=counts(p);
+  if(done.has(id)){done.delete(id);justDone.delete(id)}
+  else{
+    done.add(id);justDone.add(id);
+    const tk=byId(id);(tk.steps||[]).forEach((x,i)=>sdone.add(stKey(tk,i)));
+    const after=counts(p);
+    if(after.d===after.n&&before.d<before.n){toast('Project complete. Well done!');confetti()}
+    else toast('Nice. One down.');
+  }
+  save();
+  render();
+}
+function toggleStep(tid,i,e){
+  e&&e.stopPropagation();
+  const t=byId(tid);if(!t)return;
+  const k=stKey(t,i);
+  sdone.has(k)?sdone.delete(k):sdone.add(k);
+  const all=t.steps.every((x,j)=>stDone(t,j));
+  const p=proj(t.p),before=counts(p);
+  if(all&&!done.has(tid)){done.add(tid);justDone.add(tid);const a=counts(p);if(a.d===a.n&&before.d<before.n){toast('Project complete. Well done!');confetti()}else toast('Step finished. Task done!')}
+  else if(!all&&done.has(tid)){done.delete(tid);justDone.delete(tid)}
+  else toast('Nice.');
+  save();render();
+}
+function toggleOpen(id){open.has(id)?open.delete(id):open.add(id);render()}
+function go(h){justDone.clear();location.hash=h}
+function setTime(v){timeF=v;justDone.clear();homeCount=5;render()}
+function copyPrompt(id,btn){
+  const text=byId(id).prompt.replace(/<[^>]+>/g,'');
+  const ok=()=>{btn.textContent='Copied';btn.classList.add('ok');setTimeout(()=>{btn.textContent='Copy this';btn.classList.remove('ok')},1500)};
+  const fb=()=>{const a=document.createElement('textarea');a.value=text;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}a.remove();ok()};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(ok,fb);else fb();
+}
+
+/* ask us: one place, three ways, set per client */
+function askUs(taskId){
+  const t=taskId?byId(taskId):null;
+  const subj=encodeURIComponent('Question about my plan'+(t?': '+plain(t):''));
+  $('about').innerHTML=t?'About: <b>'+esc(plain(t))+'</b>':'About anything in your plan.';
+  const opts=[];
+  if(HELP.email)opts.push(['mailto:'+HELP.email+'?subject='+subj,'✉️','Email us','Write as much or as little as you like.',false]);
+  if(HELP.text)opts.push([isPH(HELP.text)?'#':'sms:'+HELP.text,'💬','Text us',isPH(HELP.text)?'<mark>'+HELP.text+'</mark>':'Quick questions, quick answers.',isPH(HELP.text)]);
+  if(HELP.book)opts.push([isPH(HELP.book)?'#':HELP.book,'📅','Book 15 minutes with us',isPH(HELP.book)?'<mark>'+HELP.book+'</mark>':'Walk through it together.',isPH(HELP.book)]);
+  $('opts').innerHTML=opts.map(o=>`<a class="opt" href="${o[0]}" ${o[4]?'onclick="return false"':''}><span class="ic">${o[1]}</span><div><b>${o[2]}</b><span>${o[3]}</span></div></a>`).join('');
+  $('ov').classList.add('show');
+}
+function closeAsk(){$('ov').classList.remove('show')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAsk()});
+
+function rowHtml(t,o){
+  o=o||{};
+  const isDone=done.has(t.id),isOpen=open.has(t.id);
+  const nSt=(t.steps||[]).length,dSt=(t.steps||[]).filter((x,i)=>stDone(t,i)).length;
+  const meta=[`<b>${t.mins} min</b>`,t.mine?'<span class="m-free">Your own step</span>':(t.ai?'<span class="m-ai">Uses AI helper</span>':'<span class="m-free">No AI needed</span>')];
+  if(nSt&&dSt&&!isDone)meta.push(dSt+' of '+nSt+' steps');
+  if(o.proj)meta.push(proj(t.p).name.replace(/<[^>]+>/g,''));
+  return `<div class="r ${isDone?'done':''} ${isOpen?'open':''}">
+    <div class="rh" role="button" tabindex="0" aria-expanded="${isOpen}" onclick="toggleOpen('${t.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleOpen('${t.id}')}">
+      <button class="check" aria-label="${isDone?'Mark not done':'Mark done'}" onclick="toggleDone('${t.id}',event)">${isDone?'&#10003;':''}</button>
+      <div class="rm"><div class="rt">${t.mine?esc(t.title):t.title}</div><div class="rs">${o.next?'<span class="m-next">NEXT</span>':''}${meta.join(' &middot; ')}</div></div>
+      ${chev}
+    </div>
+    <div class="rd">
+      ${t.why?`<div class="why">${t.why}</div>`:''}
+      ${t.note?`<div class="why note"><b>Notes:</b> ${t.note}</div>`:''}
+      ${(t.steps||[]).length?`<div class="lbl">Steps</div><ol class="steps">${t.steps.map((s,i)=>`<li class="${stDone(t,i)?'sdone':''}" onclick="toggleStep('${t.id}',${i},event)"><span>${stText(s)}</span></li>`).join('')}</ol>`:''}
+      ${t.prompt?`<div class="shortcut"><p><b>Want a shortcut?</b> Copy this and paste it into your AI helper.</p><div class="prompt">${t.prompt.replace(/\[([^\]<]+)\]/g,'<mark>[$1]</mark>')}</div><button class="copy" onclick="copyPrompt('${t.id}',this)">Copy this</button></div>`:''}
+      ${t.mine?`<button class="helpme" onclick="removeStep('${t.id}',event)">Remove this step</button>`:`<button class="helpme" onclick="askUs('${t.id}')">Need help with this step? Ask us</button>`}
+    </div>
+  </div>`;
+}
+function filtersHtml(){
+  return `<div class="filters"><span class="fl">I have:</span>${FILTERS.map(f=>`<button class="f" aria-pressed="${timeF===f[0]}" onclick="setTime('${f[0]}')">${f[1]}</button>`).join('')}</div>`;
+}
+
+function home(){
+  const focus=focusProject();
+  const pool=ordered().filter(i=>(!done.has(i)||justDone.has(i))&&timeOk(byId(i)));
+  const shown=pool.slice(0,homeCount);
+  const firstUndone=shown.find(i=>!done.has(i));
+  const total=TASKS.length;
+  return `
+  <div class="eyebrow">Your plan</div>
+  <h1>Hi ${CLIENT_NAME}. Here is the whole picture.</h1>
+  <p class="lede">A few projects, one at a time. You do not have to hold it all in your head. We did that part.</p>
+  <div class="keydate"><div class="krow"><b>${KEYDATE?'Your key date: '+KEYDATE:'Your progress'}</b><span>${done.size} of ${total} steps done</span></div><div class="kbar"><span style="width:${total?Math.round(done.size/total*100):0}%"></span></div></div>
+
+  <div class="sec"><h2>What to do next</h2>${filtersHtml()}</div>
+  <div class="list">${shown.length?shown.map(i=>rowHtml(byId(i),{proj:true,next:i===firstUndone})).join(''):'<div class="none">Nothing that fits. Try a different amount of time.</div>'}</div>
+  ${addBox('mine')}
+  ${(pool.length>homeCount||homeCount>5)?`<div class="two">${pool.length>homeCount?`<button class="more" onclick="homeCount+=5;render()">Show more (${pool.length-homeCount} left)</button>`:''}${homeCount>5?`<button class="more" onclick="homeCount=5;render()">Show top 5 again</button>`:''}</div>`:''}
+
+  <div class="sec"><h2>The whole picture</h2><span class="sub">Open a project to see all its steps.</span></div>
+  <div class="pgrid">${visibleProjects().map((p,i)=>{
+    const c=counts(p),pct=pctOf(c),fin=c.n>0&&c.d===c.n,isF=focus&&focus.id===p.id;
+    const status=fin?'Finished':(c.d?'In progress':'Not started');
+    return `<button class="proj ${isF?'focus':''} ${fin?'fin':''}" onclick="go('#/p/${p.id}')">
+      <div class="num">${fin?'&#10003;':i+1}</div>
+      <div class="pb">${isF?'<div class="starthere">'+(c.d?'Keep going':'Start here')+'</div>':''}<div class="pn">${p.name}</div><div class="po">${p.outcome}</div>
+      <div class="bar"><span style="width:${pct}%"></span></div>
+      <div class="pf"><span><b>${c.d} of ${c.n}</b> steps &middot; ${status}</span><span>Open &rarr;</span></div></div></button>`}).join('')}</div>
+  <div class="foot">Not sure about something? Nothing here is a test.<br><button class="btn" onclick="askUs()">Ask us</button></div>
+  <button class="olink" onclick="go('#/overview')"><div><b>Your overview</b><span>Where you are, what we are building, your tools and your results. Nothing to do here, just for reference.</span></div><i>Open &rarr;</i></button>
+  <div class="powered">Powered by elevatemy.ai</div>`;
+}
+
+const shut={};
+function fold(key,title,body){
+  return `<div class="ovc ${shut[key]?'shut':''}"><div class="ovc-h" role="button" tabindex="0" onclick="shut['${key}']=!shut['${key}'];render()" onkeydown="if(event.key==='Enter'){shut['${key}']=!shut['${key}'];render()}"><span>${title}</span>${chev}</div><div class="ovc-b">${body}</div></div>`;
+}
+function overview(){
+  const total=TASKS.length,d=done.size,pct=total?Math.round(d/total*100):0;
+  const progress=`<div class="big">${pct}%<small>${d} of ${total} steps done</small></div><div class="bar lg"><span style="width:${pct}%"></span></div>`+
+    visibleProjects().map((p,i)=>{const c=counts(p),pp=pctOf(c);
+      return `<button class="prow" onclick="go('#/p/${p.id}')"><div class="num">${c.n>0&&c.d===c.n?'&#10003;':i+1}</div><div class="pb"><div class="pn">${p.name}</div><div class="po">${p.outcome}</div><div class="bar"><span style="width:${pp}%"></span></div></div><div class="cnt"><b>${c.d} of ${c.n}</b>steps</div></button>`}).join('');
+  const W=OV.where||[],H=OV.heading||[],TL=OV.tools||[],RS=OV.results||[];
+  const li=a=>a.map(x=>'<li>'+x+'</li>').join('');
+  const parts=[fold('prog','Your progress',progress)];
+  if(W.length||H.length)parts.push(fold('where','Where you are and where we are heading',`<div class="fold-b" style="border:none;padding:6px 0 0"><div><h4>Where you are today</h4><ul>${li(W)}</ul></div><div><h4>Where we are heading</h4><ul>${li(H)}</ul></div></div>`));
+  if(TL.length)parts.push(fold('tools','Your tools',`<table class="tbl"><tr><th>Area</th><th>What you use today</th><th>What we suggest</th></tr>${TL.map(r=>`<tr><td>${r.area||''}</td><td>${r.today||''}</td><td>${r.suggest||''}</td></tr>`).join('')}</table>`));
+  if(RS.length)parts.push(fold('res','Results so far',`<table class="tbl"><tr><th>Measure</th><th>Started</th><th>Now</th><th>Goal</th></tr>${RS.map(r=>`<tr><td>${r.measure||''}</td><td>${r.start||''}</td><td>${r.now||''}</td><td>${r.goal||''}</td></tr>`).join('')}</table><p class="sub" style="margin-top:10px">Only real numbers go here. We update it with you at each check-in.</p>`));
+  return `<button class="back" onclick="go('#/')">&larr; Back to your plan</button>
+  <div class="eyebrow">For reference</div>
+  <h1>Your overview</h1>
+  <p class="lede">The big picture, in one place. Nothing to do here. Your steps are on the plan page.</p>
+  ${KEYDATE?`<div class="keydate" style="margin-top:14px"><div class="krow"><b>Your key date: ${KEYDATE}</b></div></div>`:''}
+  ${parts.join('')}
+  <div class="foot">Questions about any of this?<br><button class="btn" onclick="askUs()">Ask us</button></div>
+  <div class="powered">Powered by elevatemy.ai</div>`;
+}
+
+function projectPage(id){
+  const p=proj(id);if(!p)return home();
+  const c=counts(p),pct=pctOf(c);
+  const nextId=p.groups.flatMap(g=>g.ids).find(i=>!done.has(i));
+  const vp=visibleProjects(),idx=vp.indexOf(p),nextP=vp[idx+1];
+  const groups=p.groups.map(g=>{
+    const ids=g.ids.filter(i=>!(hideDone&&done.has(i))&&(done.has(i)||timeOk(byId(i))));
+    if(!ids.length)return '';
+    return `<div class="group"><h3>${g.name}</h3><div class="gs">${g.sub}</div><div class="list">${ids.map(i=>rowHtml(byId(i),{next:i===nextId})).join('')}</div></div>`}).join('');
+  return `<button class="back" onclick="go('#/')">&larr; The whole picture</button>
+  <div class="eyebrow">${p.id==='mine'?'Your own list':'Project '+(idx+1)+' of '+vp.length}</div>
+  <h1>${p.name}</h1>
+  ${p.done?`<div class="donewhen"><div class="lbl">This project is done when</div><p>${p.done}</p></div>`:''}
+  <div class="pbar"><div class="bar"><span style="width:${pct}%"></span></div><span><b>${c.d} of ${c.n}</b> steps</span></div>
+  <div class="bar-row">${filtersHtml()}<label class="hide"><input type="checkbox" ${hideDone?'checked':''} onchange="hideDone=this.checked;render()"/> Hide finished</label></div>
+  ${groups||'<div class="list"><div class="none">Nothing that fits. Try a different amount of time.</div></div>'}
+  ${c.n>0&&c.d===c.n?`<div class="finish"><h3>Done: ${p.name.replace(/<[^>]+>/g,'')}</h3><p>${nextP?'Next project: '+nextP.name.replace(/<[^>]+>/g,'')+'.':'That is every project.'}</p>${nextP?`<button class="btn" onclick="go('#/p/${nextP.id}')">Open it</button>`:`<button class="btn" onclick="askUs()">Tell us how it went</button>`}</div>`:''}
+  ${addBox(p.id)}
+  <div class="keep"><div class="lbl">Keep handy</div><ul>${p.keep.map(k=>`<li>${k}</li>`).join('')}</ul></div>
+  <div class="foot">Stuck on this project?<br><button class="btn" onclick="askUs()">Ask us</button></div>
+  <div class="powered">Powered by elevatemy.ai</div>`;
+}
+
+function render(){
+  const m=location.hash.match(/^#\/p\/(\w+)/);
+  $('app').innerHTML=location.hash==='#/overview'?overview():(m?projectPage(m[1]):home());
+}
+window.addEventListener('hashchange',()=>{render();window.scrollTo(0,0)});
+async function fetchPlan(){
+  const r=await fetch('/api/plan'+location.search,{cache:'no-store',headers:ADMIN_KEY?{'x-admin-key':ADMIN_KEY}:{}});
+  if(!r.ok)throw new Error(String(r.status));
+  return r.json();
+}
+const ADMIN_KEY=new URLSearchParams(location.search).get('k')||'';
+function busy(){const a=document.activeElement;return saveT||document.querySelector('.ov.show')||(a&&/^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)&&a.value)}
+async function refresh(){
+  if(busy()||Date.now()-lastPush<4000)return;
+  try{const d=await fetchPlan();if(busy())return;const y=scrollY;loadPlan(d);render();scrollTo(0,y)}catch(e){}
+}
+(async function boot(){
+  try{loadPlan(await fetchPlan())}
+  catch(e){$('app').innerHTML='<div class="none" style="margin-top:40px">We could not load your plan just now. Please refresh in a minute, or email <a href="mailto:admin@elevatemy.ai">admin@elevatemy.ai</a>.</div>';return}
+  render();
+  setInterval(refresh,30000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
+})();
+</script>
+</body>
+</html>
