@@ -24,7 +24,11 @@ module.exports = async (req, res) => {
       out.push({ ...s, newlyDone, newlyAdded, idleDays: idle, upNext: left, firstWeek: !p.snap });
       marks.push(['SET', 'digest:' + p.id, JSON.stringify({ done: p.prog.done, added: p.prog.added, t: now })]);
     });
-    if (req.query && req.query.mark === '1') await L.pipe(marks);
+    // client feedback form: how many responses since the last digest
+    const fbLast = +((await L.rc(['GET', 'feedback:digest'])) || 0);
+    const fbRows = ((await L.rc(['LRANGE', 'feedback', 0, 499])) || []).map(L.parse).filter(Boolean);
+    const fbNew = fbRows.filter(f => f.t > fbLast).length;
+    if (req.query && req.query.mark === '1') { marks.push(['SET', 'feedback:digest', String(now)]); await L.pipe(marks); }
     const lines = ['Weekly client plan digest', ''];
     if (!out.length) lines.push('No client plans yet.');
     out.forEach(o => {
@@ -37,6 +41,8 @@ module.exports = async (req, res) => {
       if (o.upNext.length) lines.push('  Next up: ' + o.upNext.join('; '));
       lines.push('');
     });
+    lines.push(fbNew ? `Client feedback: ${fbNew} new response${fbNew === 1 ? '' : 's'} this week. Read them at elevate-plans.vercel.app/feedback/responses` : 'Client feedback: no new responses this week.');
+    lines.push('');
     lines.push('Reminder: download a backup from the admin page once a month.');
     return L.send(res, 200, { text: lines.join('\n'), plans: out, marked: req.query && req.query.mark === '1' });
   } catch (e) {
