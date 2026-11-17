@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Feedback responses | elevatemy.ai</title><meta name="robots" content="noindex">
+<style>
+:root{--navy:#1c2f4a;--teal:#1f9e8e;--cream:#faf6ef;--ink:#23201c;--mid:#5c5c63;--line:#e4ded2}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 60px}h1{color:var(--navy);margin:0 0 4px}
+.top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px;color:var(--mid)}
+.item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px}
+.hd{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px}.hd b{color:var(--navy);font-size:1.05rem}
+.q{font-weight:600;color:var(--navy);margin-top:12px;font-size:.88rem}.a{white-space:pre-wrap}
+.tag{display:inline-block;font-size:.75rem;background:#e3f5f2;border:1px solid #bfe4dd;color:#146b60;border-radius:99px;padding:2px 10px}
+button,a.b{background:#fff;border:1px solid #cfc8ba;border-radius:8px;padding:6px 12px;font:inherit;cursor:pointer;color:var(--navy);text-decoration:none}
+input{border:1px solid #cfc8ba;border-radius:8px;padding:8px 10px;font:inherit}
+</style></head><body><div class="wrap"><h1>Client feedback</h1>
+<div class="top"><span id="n"></span><button onclick="copyAll()">Copy all</button><a class="b" href="/feedback" target="_blank">Open the form</a></div>
+<div id="login" style="display:none"><p>Enter your admin key to see responses.</p><input id="k" type="password" placeholder="Admin key"> <button onclick="saveKey()">Show</button></div>
+<div id="list"></div></div>
+<script>
+let items=[];const key=()=>{try{return localStorage.getItem('plansAdminKey')||''}catch(e){return ''}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function saveKey(){try{localStorage.setItem('plansAdminKey',document.getElementById('k').value.trim())}catch(e){}load()}
+async function load(){
+  const k=key();if(!k){document.getElementById('login').style.display='block';return}
+  const r=await fetch('/api/feedback',{headers:{'x-admin-key':k}});
+  if(r.status===401){document.getElementById('login').style.display='block';document.getElementById('list').innerHTML='<p>That key did not work.</p>';return}
+  document.getElementById('login').style.display='none';
+  items=(await r.json()).items||[];
+  document.getElementById('n').textContent=items.length+' response'+(items.length===1?'':'s');
+  document.getElementById('list').innerHTML=items.length?items.map(it=>'<div class="item"><div class="hd"><b>'+esc(it.name||'(no name)')+'</b><span>'+new Date(it.t).toLocaleString()+'</span></div>'+(it.quote?'<span class="tag">Quote: '+esc(it.quote)+'</span>':'')+it.answers.map(a=>'<div class="q">'+esc(a.q)+'</div><div class="a">'+esc(a.a)+'</div>').join('')+'<div style="margin-top:12px"><button onclick="del(\''+it.id+'\')">Delete</button></div></div>').join(''):'<p>No responses yet.</p>';
+}
+async function del(id){if(!confirm('Delete this response? This cannot be undone.'))return;await fetch('/api/feedback?id='+encodeURIComponent(id),{method:'DELETE',headers:{'x-admin-key':key()}});load()}
+function copyAll(){const t=items.map(it=>(it.name||'(no name)')+' - '+new Date(it.t).toLocaleDateString()+(it.quote?'\nQuote: '+it.quote:'')+'\n\n'+it.answers.map(a=>'Q: '+a.q+'\nA: '+a.a).join('\n\n')).join('\n\n----------\n\n');navigator.clipboard.writeText(t)}
+load();
+</script></body></html>

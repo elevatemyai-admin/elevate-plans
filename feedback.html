@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Client feedback | elevatemy.ai</title><meta name="robots" content="noindex">
+<style>
+:root{--navy:#1c2f4a;--teal:#1f9e8e;--cream:#faf6ef;--ink:#23201c;--mid:#5c5c63;--line:#e4ded2}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.55 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:680px;margin:0 auto;padding:32px 20px 64px}
+.brand{font-weight:800;font-size:1.5rem;color:var(--navy);letter-spacing:-.02em}.brand b{color:var(--teal)}
+.sub{font-size:.7rem;letter-spacing:.16em;color:#a08a6a;margin-top:2px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px;margin-top:22px}
+h1{color:var(--navy);font-size:1.7rem;margin:0 0 6px;line-height:1.2}
+p.lead{color:var(--mid);margin:0 0 6px}
+label{display:block;font-weight:600;color:var(--navy);margin:22px 0 6px;font-size:.95rem}
+textarea,input[type=text]{width:100%;border:1px solid #cfc8ba;border-radius:10px;padding:11px 13px;font:inherit;color:var(--ink);background:#fff}
+textarea{min-height:92px;resize:vertical}textarea:focus,input:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal)}
+.opts{display:grid;gap:8px;margin-top:6px}
+.opt{display:flex;gap:10px;align-items:flex-start;font-weight:400;color:var(--ink);margin:0;cursor:pointer}
+.opt input{margin-top:5px;accent-color:var(--teal)}
+button{margin-top:26px;background:var(--teal);color:#fff;border:0;border-radius:10px;padding:13px 26px;font:inherit;font-weight:700;cursor:pointer}
+button:disabled{opacity:.6;cursor:default}
+.err{color:#b3261e;margin-top:14px;display:none}.hp{position:absolute;left:-9999px}
+.thanks{text-align:center;padding:30px 10px}.thanks h1{margin-bottom:10px}
+</style></head><body><div class="wrap">
+<div class="brand">elevatemy<b>.ai</b></div><div class="sub">AI SOLUTIONS FOR GROWING BUSINESSES</div>
+<div class="card" id="card">
+<form id="f" novalidate>
+<h1>elevatemy.ai client feedback form</h1>
+<p class="lead">Short answers are great. Skip anything that doesn't fit. Fill in at least one.</p>
+<label for="name">Respondent name</label><input type="text" id="name" maxlength="120" autocomplete="name">
+<div id="qs"></div>
+<label>It's okay to quote me in Elevate: AI Made Simple if any of this is useful to share</label>
+<div class="opts">
+<label class="opt"><input type="radio" name="quote" value="First name only"> First name only</label>
+<label class="opt"><input type="radio" name="quote" value="Fully anonymous"> Fully anonymous</label>
+<label class="opt"><input type="radio" name="quote" value="Please don't quote me"> Please don't quote me</label>
+</div>
+<input class="hp" type="text" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+<div class="err" id="err"></div>
+<button type="submit" id="go">Submit</button>
+</form></div></div>
+<script>
+const Q=["Walking back through the process so far, what's stood out to you, good or bad?",
+"Has the pace and format worked for you, or would a different cadence have served you better?",
+"If you had to explain to another business owner what elevatemy.ai actually does, what would you say?",
+"Is there anything we offer that you didn't realize was on the table until we did it?",
+"What's one specific thing we built or set up that you've actually used or leaned on?",
+"Has anything freed up time, mental space, or clarity you didn't have before?",
+"What's one concrete result or moment of progress you'd point to so far?",
+"What's been confusing, slow, or missing that we should fix?",
+"Anything you expected from this process that hasn't happened yet?",
+"In your own words, how would you describe working with elevatemy.ai to someone considering it?"];
+const qs=document.getElementById('qs');
+Q.forEach((q,i)=>{qs.insertAdjacentHTML('beforeend','<label for="q'+i+'">'+q+'</label><textarea id="q'+i+'" maxlength="4000"></textarea>')});
+document.getElementById('f').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const err=document.getElementById('err'),go=document.getElementById('go');err.style.display='none';
+  const answers=Q.map((q,i)=>({q,a:document.getElementById('q'+i).value})).filter(x=>x.a.trim());
+  const name=document.getElementById('name').value.trim();
+  if(!answers.length){err.textContent='Please fill in at least one answer.';err.style.display='block';return}
+  const qt=document.querySelector('input[name=quote]:checked');
+  go.disabled=true;go.textContent='Sending...';
+  try{
+    const r=await fetch('/api/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,answers,quote:qt?qt.value:'',website:document.getElementById('website').value})});
+    const d=await r.json();if(!r.ok)throw new Error(d.error||'Could not send');
+    document.getElementById('card').innerHTML='<div class="thanks"><h1>Thank you.</h1><p class="lead">Your feedback went straight to Tracy and Matt. We read every word.</p></div>';
+  }catch(x){err.textContent=x.message+' Your answers are still on this page, so you can try again.';err.style.display='block';go.disabled=false;go.textContent='Submit'}
+});
+</script></body></html>

@@ -1,10 +1,40 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/plan.html" },
-    { "source": "/admin", "destination": "/admin.html" }
+    {
+      "source": "/",
+      "destination": "/plan.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/feedback",
+      "destination": "/feedback.html"
+    },
+    {
+      "source": "/feedback/responses",
+      "destination": "/feedback-responses.html"
+    }
   ],
   "headers": [
-    { "source": "/admin", "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }] },
-    { "source": "/(.*)", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] }
+    {
+      "source": "/admin",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    }
   ]
 }
