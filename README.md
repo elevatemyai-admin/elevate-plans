@@ -4,14 +4,16 @@ One Vercel project serves every client's action plan. Plans, steps and progress 
 Edit anything at /admin. Nothing needs uploading to GitHub after the first setup.
 
 ## Two page designs
-- New (Nov 24): Hub, Tracker and Bank tabs. Served by plan-v4.html. Used by plans with Page design set to Hub, Tracker and Bank in /admin > Basics (stored as view: v4). Rachel is the first.
-- Classic: the projects list page, plan.html. Every plan without view v4 still uses it (Devon, Agnes, Janel, CWM, demo).
+- New (Nov 24): Hub, Tracker and Bank tabs. Served by plan-v4.html. Used by plans with Page design set to Hub, Tracker and Bank in /admin > Basics (stored as view: v4). Rachel was first. Agnes, Devon and Janel were switched on Nov 24 too, but their steps still have no due dates, Who or Type, so their week counts show 0 and every step shows as the clients until those are filled in (see Moving a plan to the new design, step 2).
+- Classic: the projects list page, plan.html. Every plan without view v4 still uses it (Tracespective, demo).
 - router.html decides which one to show for a web address. vercel.json sends the home address to router.html.
 
 ## What the new design shows
 - Hub: key date countdown, how many steps are on the client and on you, the client's next 3, Where we are and Where we are heading (Overview), projects with progress, Decided and Still open, Results so far.
 - Tracker: every step by date with Type, Who, Status (Not started, In progress, Done) and Waiting on. Filters for project and whose. Tap a title for why, steps and the AI prompt. Client can add their own steps.
 - Bank: items you add in /admin > Bank, plus every project's Keep handy list and every step's AI prompt.
+
+- Counts use a 7 day window: this week means due within 7 days or overdue. A step with no due date is never counted as this week. A step with no Who counts as the clients. Set your first name in Basics, because a blank name makes every step count as yours too.
 
 ## Moving a plan to the new design
 1. /admin > open the plan > Basics: set Page design to Hub, Tracker and Bank, set Plan level, your first name, and the key date as a date (for the countdown). Save.
