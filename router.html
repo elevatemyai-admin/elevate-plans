@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow"><title>Your Plan | elevatemy.ai</title>
+<style>body{font-family:system-ui,sans-serif;color:#5d6b85;padding:40px 20px;text-align:center}</style></head>
+<body>Loading your plan...
+<script>
+/* Picks the page design for this address: plans with view "v4" get the Hub / Tracker / Bank page (plan-v4.html), every other plan keeps the classic page (plan.html). */
+(async function(){
+  let file='/plan.html';
+  try{
+    const h={};const k=new URLSearchParams(location.search).get('k');if(k)h['x-admin-key']=k;
+    const r=await fetch('/api/plan'+location.search,{cache:'no-store',headers:h});
+    if(r.ok){const j=await r.json();if(j&&j.plan&&j.plan.view==='v4')file='/plan-v4.html';}
+  }catch(e){}
+  try{
+    const t=await (await fetch(file,{cache:'no-store'})).text();
+    document.open();document.write(t);document.close();
+  }catch(e){document.body.textContent='We could not load your plan just now. Please refresh in a minute, or email admin@elevatemy.ai.';}
+})();
+</script></body></html>

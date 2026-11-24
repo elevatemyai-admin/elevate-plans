@@ -49,23 +49,25 @@ function pendingImport(){try{return window.name.startsWith('ELEVATE_IMPORT:')?JS
 function convertImport(p){const keys=new Set(p.progress.steps||[]);const dn=new Set(p.progress.done||[]);p.plan.tasks.forEach(t=>{(t.steps||[]).forEach(s=>{if(typeof s!=='string'&&s.d||dn.has(t.id))keys.add(stKey(t,s))});t.steps=(t.steps||[]).map(stText)});p.progress.steps=[...keys]}
 async function doImport(){const list=pendingImport();for(const p of list){convertImport(p);await api({action:'save',id:p.id,plan:p.plan,hosts:p.hosts});await api({action:'saveProgress',id:p.id,progress:p.progress})}window.name='';toast('Imported '+list.length+' plans');home()}
 function signOut(){localStorage.removeItem('plansAdminKey');KEY='';login()}
-function blank(){return {client:'',keyDate:'',help:{email:'admin@elevatemy.ai',text:'',book:'',reply:'2'},demo:false,projects:[{id:'p1',name:'First project',outcome:'',done:'',groups:[{name:'Steps',sub:'',ids:[]}],keep:[]}],tasks:[],overview:{where:[],heading:[],tools:[],results:[]}}}
+function blank(){return {view:'v4',level:'Essentials',advisor:'Tracy',keyISO:'',decided:[],open:[],bank:[],client:'',keyDate:'',help:{email:'admin@elevatemy.ai',text:'',book:'',reply:'2'},demo:false,projects:[{id:'p1',name:'First project',outcome:'',done:'',groups:[{name:'Steps',sub:'',ids:[]}],keep:[]}],tasks:[],overview:{where:[],heading:[],tools:[],results:[]}}}
 function newPlan(){const id=(prompt('Short name for the plan (lowercase letters, no spaces), for example rachel')||'').trim().toLowerCase();if(!id)return;if(!/^[a-z0-9-]{1,40}$/.test(id)){toast('Lowercase letters, numbers and dashes only');return}CUR={id,plan:blank(),progress:{done:[],added:[]},hosts:[],isNew:true};TAB='basics';edit()}
 async function openPlan(id){const r=await api({action:'get',id});CUR=r;if(!CUR.plan)CUR.plan=blank();TAB='basics';edit()}
 async function backup(){const j=await api({action:'export'});const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(j,null,1)],{type:'application/json'}));a.download='elevate-plans-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click()}
 function restore(){const i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=async()=>{const t=await i.files[0].text();if(!confirm('Restore from this backup? Plans in the file replace plans with the same name.'))return;const r=await api({action:'import',data:JSON.parse(t)});toast('Restored '+r.restored);home()};i.click()}
-function tabs(){return `<div class="tabs">${[['basics','Basics'],['steps','Projects and steps'],['overview','Overview'],['progress','Progress'],['json','Raw']].map(t=>`<button class="${TAB===t[0]?'on':''}" onclick="try{collect()}catch(e){};TAB='${t[0]}';edit()">${t[1]}</button>`).join('')}</div>`}
+function tabs(){return `<div class="tabs">${[['basics','Basics'],['steps','Projects and steps'],['overview','Overview'],['bank','Bank'],['progress','Progress'],['json','Raw']].map(t=>`<button class="${TAB===t[0]?'on':''}" onclick="try{collect()}catch(e){};TAB='${t[0]}';edit()">${t[1]}</button>`).join('')}</div>`}
 function edit(){
   const p=CUR.plan;
   let body='';
   if(TAB==='basics')body=`<div class="card"><div class="row"><div><label>Client first name</label><input id="b_client" value="${esc(p.client)}"/></div><div><label>Key date or event (optional)</label><input id="b_key" value="${esc(p.keyDate)}"/></div></div>
   <div class="row"><div><label>Email for questions</label><input id="b_email" value="${esc(p.help.email)}"/></div><div><label>Text number (optional)</label><input id="b_text" value="${esc(p.help.text)}"/></div><div><label>Booking link (optional)</label><input id="b_book" value="${esc(p.help.book)}"/></div><div style="max-width:140px"><label>Reply in (days)</label><input id="b_reply" value="${esc(p.help.reply)}"/></div></div>
+  <div class="row"><div><label>Page design</label><select id="b_view"><option value="v4" ${p.view==='v4'?'selected':''}>Hub, Tracker and Bank (new)</option><option value="" ${p.view==='v4'?'':'selected'}>Classic (projects list)</option></select></div><div><label>Plan level</label><select id="b_level">${['','Essentials','Growth','Scale'].map(x=>`<option ${p.level===x?'selected':''}>${x}</option>`).join('')}</select></div><div><label>Your first name (for the client)</label><input id="b_adv" value="${esc(p.advisor||'Tracy')}"/></div><div><label>Key date as a date (for the countdown)</label><input id="b_iso" type="date" value="${esc(p.keyISO||'')}"/></div></div>
   <label>Web addresses for this plan (one per line, no https://)</label><textarea id="b_hosts" placeholder="devon-root-to-rise.vercel.app">${esc((CUR.hosts||[]).join('\n'))}</textarea>
   ${p.demo?'<label><input type="checkbox" id="b_demo" style="width:auto" checked/> This is a demo plan (shows the yellow sample bar and does not save anything)</label>':''}</div>`;
   if(TAB==='steps')body=stepsHtml();
-  if(TAB==='overview'){const o=p.overview=p.overview||{};body=`<div class="card"><label>Where they are today (one per line)</label><textarea id="o_where">${esc((o.where||[]).join('\n'))}</textarea><label>Where we are heading (one per line)</label><textarea id="o_head">${esc((o.heading||[]).join('\n'))}</textarea>
+  if(TAB==='overview'){const o=p.overview=p.overview||{};body=`<div class="card"><label>Where they are today (one per line)</label><textarea id="o_where">${esc((o.where||[]).join('\n'))}</textarea><label>Decided so far (one per line)</label><textarea id="o_dec">${esc((p.decided||[]).join('\n'))}</textarea><label>Still open: questions waiting on an answer (one per line)</label><textarea id="o_open">${esc((p.open||[]).join('\n'))}</textarea><label>Where we are heading (one per line)</label><textarea id="o_head">${esc((o.heading||[]).join('\n'))}</textarea>
   <label>Tools: area | what they use today | what we suggest (one per line)</label><textarea id="o_tools">${esc((o.tools||[]).map(r=>[r.area,r.today,r.suggest].join(' | ')).join('\n'))}</textarea>
   <label>Results: measure | started | now | goal (one per line)</label><textarea id="o_res">${esc((o.results||[]).map(r=>[r.measure,r.start,r.now,r.goal].join(' | ')).join('\n'))}</textarea></div>`}
+  if(TAB==='bank')body=bankHtml();
   if(TAB==='progress')body=progressHtml();
   if(TAB==='json')body=`<div class="card"><p class="muted">The whole plan as data. Edit with care.</p><textarea id="j" style="min-height:420px;font-family:monospace;font-size:12px">${esc(JSON.stringify(p,null,1))}</textarea></div>`;
   const link=(CUR.hosts||[])[0];
@@ -73,9 +75,10 @@ function edit(){
 }
 function collect(){
   const p=CUR.plan;
-  if(TAB==='basics'){p.client=$('b_client').value.trim();p.keyDate=$('b_key').value.trim();p.help={email:$('b_email').value.trim(),text:$('b_text').value.trim(),book:$('b_book').value.trim(),reply:$('b_reply').value.trim()};CUR.hosts=$('b_hosts').value.split('\n').map(x=>x.trim()).filter(Boolean);if($('b_demo'))p.demo=$('b_demo').checked}
-  if(TAB==='overview'){const L=id=>$(id).value.split('\n').map(x=>x.trim()).filter(Boolean);const cols=(id,k)=>L(id).map(l=>{const c=l.split('|').map(x=>x.trim());const o={};k.forEach((n,i)=>o[n]=c[i]||'');return o});p.overview={where:L('o_where'),heading:L('o_head'),tools:cols('o_tools',['area','today','suggest']),results:cols('o_res',['measure','start','now','goal'])}}
+  if(TAB==='basics'){p.client=$('b_client').value.trim();p.keyDate=$('b_key').value.trim();p.view=$('b_view').value;p.level=$('b_level').value;p.advisor=$('b_adv').value.trim()||'Tracy';p.keyISO=$('b_iso').value;p.help={email:$('b_email').value.trim(),text:$('b_text').value.trim(),book:$('b_book').value.trim(),reply:$('b_reply').value.trim()};CUR.hosts=$('b_hosts').value.split('\n').map(x=>x.trim()).filter(Boolean);if($('b_demo'))p.demo=$('b_demo').checked}
+  if(TAB==='overview'){const L=id=>$(id).value.split('\n').map(x=>x.trim()).filter(Boolean);const cols=(id,k)=>L(id).map(l=>{const c=l.split('|').map(x=>x.trim());const o={};k.forEach((n,i)=>o[n]=c[i]||'');return o});p.overview={where:L('o_where'),heading:L('o_head'),tools:cols('o_tools',['area','today','suggest']),results:cols('o_res',['measure','start','now','goal'])};p.decided=L('o_dec');p.open=L('o_open')}
   if(TAB==='steps')collectSteps();
+  if(TAB==='bank')collectBank();
   if(TAB==='json')CUR.plan=JSON.parse($('j').value);
 }
 async function savePlan(){
@@ -92,7 +95,7 @@ function stepsHtml(){
   ${pr.groups.map((g,gi)=>`<div style="margin-top:10px;padding-left:10px;border-left:3px solid var(--tp)" data-g="${gi}"><div class="row"><div><label>Group</label><input class="gn" value="${esc(g.name)}"/></div><div><label>Group note</label><input class="gs" value="${esc(g.sub)}"/></div></div>
   ${g.ids.map(id=>{const t=tById(id);if(!t)return '';const sd=(t.steps||[]).map(stText).join('\n');return `<div class="task" data-t="${esc(t.id)}"><div class="th" onclick="this.parentNode.classList.toggle('open')"><b>${esc(String(t.title).replace(/<[^>]+>/g,''))}</b><span class="muted">${t.mins} min</span>
   <button class="b g s" title="Move up" onclick="event.stopPropagation();mv(${pi},${gi},'${esc(t.id)}',-1)">&uarr;</button><button class="b g s" onclick="event.stopPropagation();mv(${pi},${gi},'${esc(t.id)}',1)">&darr;</button><button class="b r s" onclick="event.stopPropagation();delTask(${pi},${gi},'${esc(t.id)}')">Delete</button></div>
-  <div class="tb"><label>Step title</label><input class="tt" value="${esc(t.title)}"/><div class="row"><div><label>Why it matters</label><input class="tw" value="${esc(t.why)}"/></div><div class="fix" style="width:90px"><label>Minutes</label><input class="tm" value="${esc(t.mins)}"/></div><div class="fix"><label>Uses AI</label><select class="ta"><option value="0" ${t.ai?'':'selected'}>No</option><option value="1" ${t.ai?'selected':''}>Yes</option></select></div></div>
+  <div class="tb"><label>Step title</label><input class="tt" value="${esc(t.title)}"/><div class="row"><div class="fix" style="width:160px"><label>Due date</label><input class="td" type="date" value="${esc(t.d||'')}"/></div><div><label>Who does it</label><input class="tx" placeholder="Rachel, Tracy, Together" value="${esc(t.who||'')}"/></div><div class="fix"><label>Type</label><select class="ty">${['','Task','Post','Email','Decision','Session'].map(x=>`<option ${((t.type||'')===x)?'selected':''}>${x}</option>`).join('')}</select></div><div><label>Waiting on</label><input class="tz" value="${esc(t.wait||'')}"/></div></div><div class="row"><div><label>Why it matters</label><input class="tw" value="${esc(t.why)}"/></div><div class="fix" style="width:90px"><label>Minutes</label><input class="tm" value="${esc(t.mins)}"/></div><div class="fix"><label>Uses AI</label><select class="ta"><option value="0" ${t.ai?'':'selected'}>No</option><option value="1" ${t.ai?'selected':''}>Yes</option></select></div></div>
   <label>Notes (optional)</label><textarea class="tn">${esc(t.note||'')}</textarea><label>Steps (one per line)</label><textarea class="ts" style="min-height:90px">${esc(sd)}</textarea><label>AI prompt to copy (optional)</label><textarea class="tp">${esc(t.prompt||'')}</textarea></div></div>`}).join('')}
   <button class="b g s" onclick="addTask(${pi},${gi})">+ Add a step</button></div>`).join('')}
   <div style="margin-top:10px"><button class="b g s" onclick="addGroup(${pi})">+ Add a group</button> <button class="b r s" onclick="delProject(${pi})">Delete project</button></div></div>`).join('')+`<button class="b g" onclick="addProject()">+ Add a project</button>`;
@@ -108,7 +111,8 @@ function collectSteps(){
   document.querySelectorAll('.task').forEach(el=>{
     const t=tById(el.dataset.t);if(!t)return;
     t.title=el.querySelector('.tt').value;t.why=el.querySelector('.tw').value;t.mins=+el.querySelector('.tm').value||20;t.ai=el.querySelector('.ta').value==='1';
-    t.note=el.querySelector('.tn').value;t.prompt=el.querySelector('.tp').value;
+    t.note=el.querySelector('.tn').value;t.prompt=el.querySelector('.tp').value;t.d=el.querySelector('.td').value;t.who=el.querySelector('.tx').value.trim();t.type=el.querySelector('.ty').value;t.wait=el.querySelector('.tz').value.trim();
+    ['d','who','type','wait'].forEach(k=>{if(!t[k])delete t[k]});
     t.steps=el.querySelector('.ts').value.split('\n').map(x=>x.trim()).filter(Boolean);
     if(!t.note)delete t.note;if(!t.prompt)delete t.prompt;
   });
@@ -120,6 +124,17 @@ function addProject(){collect();CUR.plan.projects.push({id:'p'+Date.now().toStri
 function mv(pi,gi,id,d){collect();const a=CUR.plan.projects[pi].groups[gi].ids;const i=a.indexOf(String(id));const j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];edit()}
 function delTask(pi,gi,id){if(!confirm('Delete this step?'))return;collect();const g=CUR.plan.projects[pi].groups[gi];g.ids=g.ids.filter(x=>String(x)!==String(id));CUR.plan.tasks=CUR.plan.tasks.filter(t=>String(t.id)!==String(id));edit()}
 function delProject(pi){if(!confirm('Delete this whole project and its steps?'))return;collect();const pr=CUR.plan.projects[pi];const ids=pr.groups.flatMap(g=>g.ids.map(String));CUR.plan.tasks=CUR.plan.tasks.filter(t=>!ids.includes(String(t.id)));CUR.plan.projects.splice(pi,1);edit()}
+/* ----- bank (words, stories and links the client reuses) ----- */
+function bankHtml(){
+  const b=CUR.plan.bank=CUR.plan.bank||[];
+  return `<p class="muted">Shown on the client's Bank tab. Prompts from steps and each project's Keep handy list show up there on their own.</p>`+b.map((x,i)=>`<div class="card" data-b="${i}"><div class="row"><div class="fix" style="width:170px"><label>Group</label><input class="bc" value="${esc(x.c||'')}" placeholder="Captions, Brand voice, Stories, Links"/></div><div><label>Title</label><input class="bh" value="${esc(x.h||'')}"/></div></div><label>Text</label><textarea class="bb" style="min-height:90px">${esc(x.b||'')}</textarea><div class="row" style="margin-top:6px"><label style="display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:14px"><input type="checkbox" class="bp" style="width:auto" ${x.pending?'checked':''}/> Not ready yet (shows "We are adding this")</label><button class="b r s fix" onclick="delBank(${i})">Delete</button></div></div>`).join('')+`<button class="b g s" onclick="addBank()">+ Add an item</button>`;
+}
+function collectBank(){
+  const out=[];document.querySelectorAll('[data-b]').forEach(el=>{const o={c:el.querySelector('.bc').value.trim()||'Notes',h:el.querySelector('.bh').value.trim(),b:el.querySelector('.bb').value};if(el.querySelector('.bp').checked)o.pending=true;if(o.h||o.b)out.push(o)});
+  CUR.plan.bank=out;
+}
+function addBank(){collectBank();CUR.plan.bank.push({c:'',h:'',b:''});edit()}
+function delBank(i){collectBank();CUR.plan.bank.splice(i,1);edit()}
 /* ----- progress ----- */
 function progressHtml(){
   const pr=CUR.progress,done=new Set(pr.done.map(String));
