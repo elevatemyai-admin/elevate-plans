@@ -9,7 +9,7 @@ async function call(path, body) {
   const r = await fetch(URL_ + path, {
     method: 'POST',
     headers: { Authorization: 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body)h
   });
   if (!r.ok) throw new Error('store ' + r.status);
   return r.json();
@@ -46,9 +46,10 @@ function cleanProgress(b) {
   const done = (Array.isArray(b.done) ? b.done : []).slice(0, 1000).map(x => String(x).slice(0, 40));
   const added = (Array.isArray(b.added) ? b.added : []).slice(0, 300)
     .filter(a => a && a.id && a.title)
-    .map(a => ({ id: String(a.id).slice(0, 40), title: String(a.title).slice(0, 160), mins: Math.min(240, Math.max(1, +a.mins || 20)), p: String(a.p || 'mine').slice(0, 40) }));
+    .map(a => ({ id: String(a.id).slice(0, 40), title: String(a.title).slice(0, 160), mins: Math.min(240, Math.max(1, +a.mins || 20)), p: String(a.p || 'mine').slice(0, 40), d: String(a.d || '').slice(0, 10) }));
   const steps = (Array.isArray(b.steps) ? b.steps : []).slice(0, 4000).map(x => String(x).slice(0, 60));
-  return { done, added, steps, t: Date.now() };
+  const ip = (Array.isArray(b.ip) ? b.ip : []).slice(0, 1000).map(x => String(x).slice(0, 40));
+   return { done, ip, added, steps, t: Date.now() };
 }
 
 async function allPlans() {
