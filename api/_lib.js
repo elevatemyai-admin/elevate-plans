@@ -9,7 +9,7 @@ async function call(path, body) {
   const r = await fetch(URL_ + path, {
     method: 'POST',
     headers: { Authorization: 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)h
+    body: JSON.stringify(body)
   });
   if (!r.ok) throw new Error('store ' + r.status);
   return r.json();
