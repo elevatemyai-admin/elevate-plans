@@ -169,7 +169,7 @@ function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');cl
 let PLAN={},ROWS=[],PROJECTS=[],SAVE=false,CLIENT='',ADVISOR='Tracy',HELP={};
 const done=new Set(),ip=new Set(),sdone=new Set();let ADDED=[];
 let tab=(location.hash||'#hub').slice(1);if(!['hub','tracker','bank'].includes(tab))tab='hub';
-const ui={fProj:'All',fWho:'All',hideDone:false,open:{},bankCat:'All'};
+const ui={fWhen:'All',fProj:'All',fWho:'All',hideDone:false,open:{},bankCat:'All'};
 let saveT=null,lastPush=0;
 
 function buildRows(){
@@ -185,7 +185,7 @@ const isMine=r=>r.mine||/Together/i.test(r.who)||(CLIENT&&r.who.toLowerCase().in
 const isAdv=r=>/Together/i.test(r.who)||r.who.toLowerCase().includes(ADVISOR.toLowerCase());
 const openRows=()=>ROWS.filter(r=>status(r)<2);
 const mineOpen=()=>openRows().filter(isMine);
-const advOpen=()=>openRows().filter(isAdv);
+const advOpen=()=>openRows().filter(isAdv);const weekEnd=new Date(Date.now()+7*864e5).toLocaleDateString('en-CA');const wk=r=>r.d&&r.d<=weekEnd;
 const byDate=(a,b)=>(a.d||'9999').localeCompare(b.d||'9999');
 const typeLabel=r=>r.type==='Mine'?'Your step':r.type==='Decision'?'Your call':r.type==='Task'||!r.type?(isAdv(r)&&!isMine(r)?ADVISOR+' task':'Step'):r.type;
 const typeClass=r=>({Post:'Post',Email:'Email',Session:'Session',Decision:'Rachel'}[r.type]||(isAdv(r)&&!isMine(r)?'Tracy':'Rachel'));
@@ -235,8 +235,8 @@ function hub(){
   <div class="stack">
     ${keyTxt?`<div class="key"><div><small>Your key date</small><b>${esc(keyTxt)}</b></div>${days!==null&&days>=0?`<div style="text-align:right"><div class="days">${days}</div><small>day${days===1?'':'s'} to go</small></div>`:''}</div>`:''}
     <div class="split">
-      <button class="stat you" data-go="You"><div class="n">${mineOpen().length}</div><span>on you right now. Tap to see them.</span></button>
-      <button class="stat us" data-go="Adv"><div class="n">${advOpen().length}</div><span>on ${esc(ADVISOR)} right now. Tap to see them.</span></button>
+      <button class="stat you" data-go="You"><div class="n">${mineOpen().filter(wk).length}</div><span>on you this week. Tap to see them.</span></button>
+      <button class="stat us" data-go="Adv"><div class="n">${advOpen().filter(wk).length}</div><span>on ${esc(ADVISOR)} this week. Tap to see them.</span></button>
     </div>
     <div class="card"><h3>Your next 3</h3>${next.length?`<ul class="next">${next.map(r=>`<li><span class="date">${r.d?fmt(r.d):''}</span><div><b>${esc(r.w)}</b><div class="sub"><span class="pill t-${typeClass(r)}">${esc(typeLabel(r))}</span>${r.wait?`<span class="wait">Waiting on: ${esc(r.wait)}</span>`:''}</div></div></li>`).join('')}</ul>`:'<p style="margin:0">Nothing waiting on you. Nice.</p>'}</div>
     ${(ov.where&&ov.where.length)||(ov.heading&&ov.heading.length)?`<div class="grid g2">
@@ -256,7 +256,7 @@ function tracker(){
   let rows=ROWS.slice();
   if(ui.fProj!=='All')rows=rows.filter(r=>r.p===ui.fProj);
   if(ui.fWho==='You')rows=rows.filter(isMine);else if(ui.fWho==='Adv')rows=rows.filter(isAdv);
-  if(ui.hideDone)rows=rows.filter(r=>status(r)<2);
+  if(ui.hideDone)rows=rows.filter(r=>status(r)<2);if(ui.fWhen==='Week')rows=rows.filter(wk);
   rows.sort(byDate);
   const g={};
   rows.forEach(r=>{const k=!r.d?'none':(r.d<TODAY&&status(r)<2)?'over':r.d;(g[k]=g[k]||[]).push(r);});
@@ -270,6 +270,7 @@ function tracker(){
   return `<h1>Tracker</h1><p class="lede">Everything by date. Tap the circle to move a step along. Tap a title for the steps and a ready-made prompt.</p>
   ${chips([['All','All'],...PROJECTS.map(p=>[p.name,p.name])],'fProj','Project')}
   ${chips([['All','All'],['You','You'],['Adv',ADVISOR]],'fWho','Whose')}
+${chips([['All','All dates'],['Week','This week']],'fWhen','When')}
   <div class="frow"><button class="chip" id="hideDone" aria-pressed="${ui.hideDone}">Hide done</button></div>
   ${body}
   <form class="addbar" id="addForm"><input id="newW" aria-label="New step" placeholder="Add your own step, like 'Ask the hat maker for photos'" required maxlength="160">
@@ -313,7 +314,7 @@ function bank(){
 
 function render(){
   document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
-  $('#youCount').textContent=mineOpen().length;
+  $('#youCount').textContent=mineOpen().filter(wk).length;
   $('#view').innerHTML=tab==='hub'?hub():tab==='tracker'?tracker():bank();
 }
 function askUs(id){
@@ -331,7 +332,7 @@ function askUs(id){
 document.addEventListener('click',e=>{
   const t=e.target.closest('button,.what');if(!t)return;
   if(t.dataset.tab){tab=t.dataset.tab;history.replaceState(null,'','#'+tab);render();scrollTo(0,0);return;}
-  if(t.dataset.go){tab='tracker';ui.fWho=t.dataset.go;ui.hideDone=true;history.replaceState(null,'','#tracker');render();scrollTo(0,0);return;}
+  if(t.dataset.go){tab='tracker';ui.fWho=t.dataset.go;ui.fWhen='Week';ui.hideDone=true;history.replaceState(null,'','#tracker');render();scrollTo(0,0);return;}
   if(t.dataset.f){ui[t.dataset.f]=t.dataset.v;render();return;}
   if(t.id==='hideDone'){ui.hideDone=!ui.hideDone;render();return;}
   if(t.dataset.bank){ui.bankCat=t.dataset.bank;render();return;}
